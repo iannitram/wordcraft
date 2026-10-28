@@ -1,6 +1,8 @@
 # WordCraft code map (our fork)
 
-Ours, not upstream's. Built 2026-10-26 from the Cargo workspace (`crates/*`, `apps/*`, `xtask`) and each crate's `Cargo.toml` description; line counts are Rust lines on `main` that day. Upstream's own architecture notes: [`docs/architecture.md`](architecture.md) where present, and `AGENTS.md`. When a crate is added or split, update this table.
+Ours, not upstream's. Audited 2026-10-28 against `main`: each row below was checked against the Cargo workspace (`crates/*`, `apps/*`, `xtask`) and that crate's `Cargo.toml` (description and internal dependencies, dev-dependencies included). Sizes are Rust lines in tracked `.rs` files at that commit. The 16 crates, 3 apps and `xtask` below are the whole workspace. Upstream's own architecture notes: [`docs/architecture.md`](architecture.md) where present, and `AGENTS.md`. When a crate is added or split, update this table.
+
+Describes commit: 1d8f900a (2026-10-28)
 
 ## Crates
 
@@ -48,9 +50,19 @@ The engine owns the session, undo and the command registry; every user action is
 - `ui-egui` is used by `wordcraft`, `wordcraft-web`.
 - `zotero` is used by `ui-egui`, `wordcraft-cli`.
 
+## Upstream and our delta
+
+Every crate, app and the `xtask` here is upstream's (`storytold/wordcraft`). Our delta on top is documentation only: `PIPELINE.md`, `SPEC.md`, `CHANGELOG.md`, `AGENTS.fork.md`, this map, `docs/agents/`, and ten lines in `CLAUDE.md` (agent-skills config); `git diff --stat upstream/main...main` shows no source file. Upstream commits daily, so a day or two of its work is not on `main` until the daily sync merges it (on 2026-10-28 the crate set was identical on both).
+
+## Outside the workspace
+
+In this repo but outside the Cargo workspace: `assets/` (app icons, fonts, hyphenation and spelling data), `packaging/` (per-OS release packaging: `linux`, `macos`, `windows`, `web`; no `freebsd` directory), `craft-i18n.rev` (the commit of the `craft-i18n` interface translations that releases embed), `ATTRIBUTION.md`, `contributors/`.
+
+Not here at all: shared code that comes in as git dependencies pinned by revision, so a change to it is a change in another repository: the `craft-*` crates (`craft-pdf`, `craft-update` and `krilla`) from `storytold/craft-libs`, and forks of egui, eframe and winit (`storytold/egui`, `storytold/winit`).
+
 ## Mac, PC and Linux (R04)
 
-- Ships for macOS, Windows and Linux (plus FreeBSD and the web) from upstream's release workflow.
-- Per-OS code sits mostly in the engine, the `ui-egui` front end and the desktop app (the "Platforms" column counts files with `cfg(target_os…)`, `cfg(windows|unix)` or wasm code). Everything else is portable Rust.
-- Upstream CI (`ci.yml`) runs on ubuntu-24.04, windows-latest and macos-latest; FreeBSD, Nix, Windows ARM64 and printing have their own workflows.
+- Packaging for macOS, Windows, Linux and the web is in `packaging/`; FreeBSD has a CI workflow but no packaging directory here. `release.yml` (push to `release`) calls the shared release workflow in `storytold/craft-common-actions`.
+- Per-OS code sits mostly in the engine, the `ui-egui` front end and the desktop app (the "Platforms" column counts files with `cfg(target_os…)`, `cfg(windows|unix)`, `cfg(target_family…)` or wasm code). Everything else is portable Rust.
+- CI: `ci.yml` (every pull request and push to main) calls `storytold/craft-common-actions` `gate.yml` with its default `os` input, `["ubuntu-24.04"]`: the full gate runs on Linux only. The one workflow that runs tests on Windows and macOS is `printing.yml`: the print host and the UI tests on `ubuntu-24.04`, `windows-latest` and `macos-latest`, for pull requests and pushes to main that touch `Cargo*`, `apps/wordcraft*`, `crates/ui-egui` or the workflow. The others: `freebsd.yml`, `nix.yml`, `packaging-lint.yml`, `windows-arm64.yml` (builds the ARM64 package and smoke-tests it; no ARM `cargo test`), `sonarcloud.yml` and `release.yml`.
 - A build issue that touches per-OS code carries a `platform:*` label and says which OS it was built and checked on.
