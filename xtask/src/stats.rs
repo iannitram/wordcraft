@@ -110,7 +110,10 @@ pub fn run(_root: &Path, exact: bool) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{Counts, count_tests, walk};
+    use super::count_tests;
+    // Only the symlink test below uses these, and it is Unix-only.
+    #[cfg(unix)]
+    use super::{Counts, walk};
 
     #[test]
     fn counts_attributes_and_proptest_blocks() {
