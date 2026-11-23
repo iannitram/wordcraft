@@ -11,3 +11,5 @@ Upstream's `AGENTS.md` and `CLAUDE.md` are upstream's: follow them for how the c
 7. **A failed job** gets a comment on the issue saying what happened, and the issue moves up one size (Easy -> Medium -> Hard).
 8. **Never edit upstream's files for our pipeline** (`ROADMAP.md`, `AGENTS.md`, `CLAUDE.md`, `docs/gaps.md`): ours are `PIPELINE.md`, `SPEC.md`, `CHANGELOG.md`, `AGENTS.fork.md` and `docs/code-map.md`. Code changes are fine; "send upstream" work goes upstream as a pull request (R36).
 9. **No private details** in code, commits or PR text: no names, e-mail addresses, home paths or machine names. Commit as the no-reply identity.
+
+**Upstream and peers:** see `PEERS.md` at the repo root. When I say "upstream", I mean the repo in its Upstream section; reuse a peer's code only as that file allows.
